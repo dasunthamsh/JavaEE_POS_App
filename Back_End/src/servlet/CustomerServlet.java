@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/customer")
@@ -170,6 +171,42 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+
+        resp.addHeader("Access-Control-Allow-Origin","*"); // *(all) mark eka hari allow karanna ona hodt eka hari danna puluwan // origin (url) dekakin deata access karanna me header eka use karanawa
+        resp.setContentType("application/json");
+        String id = req.getParameter("id");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/shop","root","1234");
+            PreparedStatement pstm = connection.prepareStatement("DELETE FROM customer WHERE id = ?");
+            pstm.setObject(1, id);
+            boolean b = pstm.executeUpdate() > 0;
+
+            if(b){
+                JsonObjectBuilder deleteCustomer = Json.createObjectBuilder();
+                deleteCustomer.add("state","ok");
+                deleteCustomer.add("message","customer delete successful");
+                deleteCustomer.add("data","");
+            } else {
+                throw new RemoteException("something wrong try agne");
+            }
+
+        }catch (RuntimeException e){
+            JsonObjectBuilder deleteCustomer = Json.createObjectBuilder();
+            deleteCustomer.add("state","ok");
+            deleteCustomer.add("message","customer delete successful");
+            deleteCustomer.add("data","");
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            resp.getWriter().print(deleteCustomer.build());
+
+        }catch (ClassNotFoundException | SQLException e){
+            JsonObjectBuilder deleteCustomer = Json.createObjectBuilder();
+            deleteCustomer.add("state","ok");
+            deleteCustomer.add("message","customer delete successful");
+            deleteCustomer.add("data","");
+            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            resp.getWriter().print(deleteCustomer.build());
+        }
     }
 
     @Override
