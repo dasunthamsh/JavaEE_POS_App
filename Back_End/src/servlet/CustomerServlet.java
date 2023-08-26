@@ -105,6 +105,66 @@ public class CustomerServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+
+        resp.addHeader("Access-Control-Allow-Origin","*"); // *(all) mark eka hari allow karanna ona hodt eka hari danna puluwan // origin (url) dekakin data access karanna me header eka use karanawa
+
+        String id = req.getParameter("id");
+        String name = req.getParameter("name");
+        String address = req.getParameter("address");
+        String salary = req.getParameter("salary");
+
+
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/shop","root","1234");
+
+
+
+            PreparedStatement pstm = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?)");
+            pstm.setObject(1, id);
+            pstm.setObject(2, name);
+            pstm.setObject(3, address);
+            pstm.setObject(4, salary);
+
+            boolean b = pstm.executeUpdate() > 0;
+
+            if(b){
+
+                JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder();
+
+                jsonObjectBuilder.add("state","ok");     // customer save message
+                jsonObjectBuilder.add("message","successfully added");
+                jsonObjectBuilder.add("data","");
+                resp.setStatus(200);
+                resp.getWriter().print(jsonObjectBuilder.build());
+
+            }
+
+            //  resp.sendRedirect("customer");
+
+        } catch (SQLException e) {
+            JsonObjectBuilder error = Json.createObjectBuilder();
+            error.add("state","error");
+            error.add("message",e.getLocalizedMessage());
+            error.add("data","");
+
+            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST); // same to this code resp.setStatus(500);
+            // resp.setStatus(500);
+
+
+            resp.getWriter().print(error.build());
+
+        }catch (ClassNotFoundException e){
+
+            JsonObjectBuilder error = Json.createObjectBuilder();
+            error.add("state","error");
+            error.add("message",e.getLocalizedMessage());
+            error.add("data","");
+            resp.getWriter().print(error.build());
+            resp.setStatus(500);
+
+
+        }
     }
 
     @Override
