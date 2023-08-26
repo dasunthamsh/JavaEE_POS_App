@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Customer Management</h2>
+
+  <!-- Form for CRUD operations -->
+  <form id="customerForm">
+
+
+    <div class="form-group">
+      <label for="customerName">Id:</label>
+      <input type="text" class="form-control" id="customerId">
+    </div>
+
+    <div class="form-group">
+      <label for="customerName">Name:</label>
+      <input type="text" class="form-control" id="customerName">
+    </div>
+
+    <div class="form-group">
+      <label for="customerAddress">Address:</label>
+      <input type="text" class="form-control" id="customerAddress">
+    </div>
+
+    <div class="form-group">
+      <label for="customerSalary">Salary:</label>
+      <input type="number" class="form-control" id="customerSalary">
+    </div>
+
+  </form>
+
+
+  <button type="button" class="btn btn-primary" id="btnSave">Save</button>
+  <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+  <button type="button" class="btn btn-primary" id="btnSearch">Search</button>
+  <button type="button" class="btn btn-primary" id="btnDelete">Delete</button>
+  <button type="button" class="btn btn-primary" id="btnGetAll">GetAll</button>
+
+
+  <hr>
+
+  <!-- Table to display customer data -->
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Salary</th>
+    </tr>
+    </thead>
+    <tbody id="tblCustomer">
+    <!-- Customer data rows will be inserted here -->
+    </tbody>
+  </table>
+</div>
+
+
+<script src="assets/js/jquery-3.6.1.min.js"></script>
+<script>
+
+var baseUrl = "http://localhost:8080/pos/";
+
+  $("#btnSave").click(function () {
+    let formData=$("#customerForm").serialize();
+
+    $.ajax({
+      url: baseUrl+"customer",
+      method: "post",
+      data: formData,
+      datatype:"json",
+      success: function (res) {
+        console.log(res);
+        alert(res.message);
+      },
+      error: function (error) {
+        console.log(error.responseJSON);
+        alert(error.responseJSON.message);
+      }
+    });
+  });
+
+
+  $("#btnUpdate").click(function (){
+
+    let id =  $("#customerId").val();
+    let name =  $("#customerName").val();
+    let address =  $("#customerAddress").val();
+    let salary =  $("#customerSalary").val();
+
+    var customerDetails = {
+
+      "id":id,
+      "name":name,
+      "address":address,
+      "salary":salary
+    }
+
+
+    $.ajax({
+
+      url:"customer",
+      method:"put",
+      data: JSON.stringify(customerDetails),
+      contentType:"application/json",
+      datatype: "json",
+
+      success:function (reqe){
+        alert(reqe.message);
+      },
+      error:function (error){
+        alert(JSON.parse(error.responseText).message);
+      }
+    });
+  });
+
+
+
+  $("#btnGetAll").click(function (){
+    $("#tblCustomer").empty();
+
+    $.ajax({
+
+      url:baseUrl+"customer",
+      success:function (res){
+
+        for (var c of res.data) {
+
+          console.log(res);
+
+          var id = c.id;
+          var name = c.name;
+          var address = c.address;
+          var salary = c.salary;
+
+          var row = "<tr><td>"+id+"</td><td>"+name+"</td><td>"+address+"</td><td>"+salary+"</td></tr>";
+          $("#tblCustomer").append(row);
+
+        }
+      }
+    });
+  });
+
+  $("#btnDelete").click(function (){
+
+    let id = $("#customerId").val();
+
+    $.ajax({
+      url: "customer?id="+id+"",
+      method: "delete",
+      success:function (resp){
+        alert(resp.message);
+      },
+      error:function (error){
+        // alert(JSON.parse(error.responseText).message);
+      }
+
+    });
+  });
+
+
+
+
+</script>
+</body>
+</html>

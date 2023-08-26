@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+</head>
+<body>
+<div class="container mt-5">
+  <h2>Item Management</h2>
+
+  <!-- Form for CRUD operations -->
+  <form id="itemForm">
+
+
+    <div class="form-group">
+      <label for="itemId">Id:</label>
+      <input type="text" class="form-control" id="itemId">
+    </div>
+
+    <div class="form-group">
+      <label for="itemName">Name:</label>
+      <input type="text" class="form-control" id="itemName">
+    </div>
+
+    <div class="form-group">
+      <label for="itemQYT">Address:</label>
+      <input type="text" class="form-control" id="itemQYT">
+    </div>
+
+    <div class="form-group">
+      <label for="itemPrice">Salary:</label>
+      <input type="number" class="form-control" id="itemPrice">
+    </div>
+
+  </form>
+
+
+  <button type="button" class="btn btn-primary" id="btnSave">Save</button>
+  <button type="button" class="btn btn-primary" id="btnUpdate">Update</button>
+  <button type="button" class="btn btn-primary" id="btnSearch">Search</button>
+  <button type="button" class="btn btn-primary" id="btnDelete">Delete</button>
+  <button type="button" class="btn btn-primary" id="btnGetAll">GetAll</button>
+
+
+  <hr>
+
+  <!-- Table to display customer data -->
+  <table class="table">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Address</th>
+      <th>Salary</th>
+    </tr>
+    </thead>
+    <tbody id="tblItem">
+    <!-- Customer data rows will be inserted here -->
+    </tbody>
+  </table>
+</div>
+
+
+<script src="assets/js/jquery-3.6.1.min.js"></script>
+<script>
+
+
+
+  $("#btnSave").click(function () {
+    let formData=$("#itemForm").serialize();
+    $.ajax({
+      url:'item',
+      method:'post',
+      data:formData,
+      success:function (res) {
+        getAllCustomer();
+        alert(res.massage);
+      },
+      error:function (err) {
+        alert(e.responseJSON.massage);
+      }
+    });
+  });
+
+
+  $("#btnUpdate").click(function (){
+
+    let code =  $("#itemId").val();
+    let name =  $("#itemName").val();
+    let price =  $("#itemPrice").val();
+    let qyt =  $("#itemQYT").val();
+
+    var customerDetails = {
+
+      "code":code,
+      "name":name,
+      "price":price,
+      "qyt":qyt
+    }
+
+    $.ajax({
+
+      url:"item",
+      method:"put",
+      data: JSON.stringify(customerDetails),
+      contentType:"application/json",
+      datatype: "json",
+
+      success:function (reqe){
+        alert(reqe.message);
+      },
+      error:function (error){
+        alert(JSON.parse(error.responseText).message);
+      }
+    });
+  });
+
+
+
+  $("#btnGetAll").click(function (){
+    $("#tblItem").empty();
+
+    $.ajax({
+
+      url:"item",
+      success:function (res){
+
+        for (var c of res.data) {
+
+          console.log(res);
+
+          var code = c.code;
+          var name = c.name;
+          var price = c.price;
+          var qyt = c.qyt;
+
+          var row = "<tr><td>"+code+"</td><td>"+name+"</td><td>"+price+"</td><td>"+qyt+"</td></tr>";
+          $("#tblItem").append(row);
+
+        }
+      }
+    });
+  });
+
+  $("#btnDelete").click(function (){
+
+    let id = $("#customerId").val();
+
+    $.ajax({
+      url: "item?id="+id+"",
+      method: "delete",
+      success:function (resp){
+        alert(resp.message);
+      },
+      error:function (error){
+        // alert(JSON.parse(error.responseText).message);
+      }
+
+    });
+  });
+
+</script>
+</body>
+</html>
