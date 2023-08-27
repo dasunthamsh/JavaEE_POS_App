@@ -18,6 +18,9 @@ public class ItemServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.addHeader("Access-Control-Allow-Origin","*");
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -70,6 +73,7 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.addHeader("Access-Control-Allow-Origin","*");
 
         String itemId = req.getParameter ("code");
         String itemCode = req.getParameter ("name");
@@ -114,6 +118,7 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.addHeader("Access-Control-Allow-Origin","*");
 
         JsonReader reader = Json.createReader(req.getReader());
         JsonObject customer = reader.readObject();
@@ -157,6 +162,8 @@ public class ItemServlet extends HttpServlet {
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.addHeader("Access-Control-Allow-Origin","*");
+
         resp.setContentType("application/json");
         String code = req.getParameter("code");
         try {
@@ -192,5 +199,13 @@ public class ItemServlet extends HttpServlet {
             resp.getWriter().print(deleteCustomer.build());
         }
     }
+
+    @Override
+    protected void doOptions(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.addHeader("Access-Control-Allow-Origin","*");
+        resp.addHeader("Access-Control-Allow-Methods","DELETE,PUT");
+        resp.addHeader("Access-Control-Allow-Headers","Content-Type");
     }
+}
 
