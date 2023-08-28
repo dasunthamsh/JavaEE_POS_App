@@ -231,5 +231,134 @@
 
 <script src="assets/js/jquery-3.7.0.min.js"></script>
 
+<script>
+    setDates();
+    generateOrderID();
+
+    $("#customer_Id").empty();
+    $("#customer_Id").append(`<option>-Select Customer-</option>`);
+
+    $.ajax({
+        url: "http://localhost:8080/pos/",
+        method: "GET",
+        success: function (res) {
+            console.log(res);
+
+            for (let customer of res) {
+                let id = customer.id;
+
+                $("#customer_Id").append(`<option>${id}</option>`);
+            }
+            console.log(res.message);
+        }, error: function (error) {
+            console.log(error.responseJSON.message);
+
+        }
+
+    });
+
+    $("#itemCode").empty();
+    $("#itemCode").append(`<option>-Select Item-</option>`);
+
+    $.ajax({
+        url: "http://localhost:8080/pos/",
+        method: "GET",
+        success: function (res) {
+            console.log(res);
+
+            for (let item of res) {
+                let code = item.code;
+
+                $("#itemCode").append(`<option>${code}</option>`);
+            }
+            console.log(res.message);
+        }, error: function (error) {
+            console.log(error.responseJSON.message);
+        }
+
+    });
+
+    $("#customer_Id").click(function () {
+        $.ajax({
+            url: "http://localhost:8080/pos/",
+            method: "GET",
+            success: function (res) {
+                console.log(res);
+
+                let val = $("#customer_Id").val();
+
+                for (let i = 0; i < res.length; i++) {
+                    if (val == res[i].id) {
+                        $("#customer_Name").val(res[i].name)
+                        $("#customer_Address").val(res[i].address)
+                        $("#customer_Salary").val(res[i].salary)
+                    }
+                }
+
+                console.log(res.message);
+            }, error: function (error) {
+                console.log(error.responseJSON.message);
+
+            }
+
+        });
+    });
+
+    $("#itemCode").click(function () {
+        $.ajax({
+            url: "http://localhost:8080/pos/",
+            method: "GET",
+            success: function (res) {
+                console.log(res);
+
+                let val = $("#itemCode").val();
+
+                for (let i = 0; i < res.length; i++) {
+                    if (val == res[i].code) {
+                        $("#item_Name").val(res[i].description)
+                        $("#unitPrice").val(res[i].unitPrice)
+                        $("#qtyOnHand").val(res[i].qty)
+                    }
+                }
+
+                console.log(res.message);
+            }, error: function (error) {
+                console.log(error.responseJSON.message);
+
+            }
+
+        });
+    });
+
+    function setDates() {
+        let date = new Date().toJSON().split("T")[0];
+        $("#orderDate").val(date);
+    }
+
+    function generateOrderID() {
+        $("#orderId").val("ORD-001");
+        let res = searchOrder();
+
+        let tempId = parseInt(res.split("-")[1]);
+        tempId = tempId + 1;
+        if (tempId <= 9) {
+            $("#orderId").val("ORD-00" + tempId);
+        } else if (tempId <= 99) {
+            $("#orderId").val("ORD-0" + tempId);
+        }
+    }
+
+    function searchOrder() {
+        let orderId = "";
+        $.ajax({
+            url: "http://localhost:8080/pos/",
+            method: "GET",
+            success: function (resp) {
+                orderId = resp.oid;
+            }
+        });
+        return orderId;
+    }
+</script>
 </body>
 </html>

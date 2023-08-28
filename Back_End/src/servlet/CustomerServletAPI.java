@@ -20,9 +20,12 @@ public class CustomerServletAPI extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        resp.addHeader("Access-Control-Allow-Origin","*");
 
+        resp.addHeader("Access-Control-Allow-Origin", "*");
+
+        resp.addHeader("Content-Type", "application/json");
         try {
+
 
             Class.forName("com.mysql.cj.jdbc.Driver");
 
@@ -46,7 +49,7 @@ public class CustomerServletAPI extends HttpServlet {
 
             }
 
-            resp.addHeader("Content-Type","application/json");
+
 
             JsonObjectBuilder job = Json.createObjectBuilder();
             job.add("status","OK");
