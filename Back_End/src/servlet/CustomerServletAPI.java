@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
 import java.sql.*;
 
 @WebServlet(urlPatterns = "/customer")
-public class CustomerServlet extends HttpServlet {
+public class CustomerServletAPI extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -25,6 +25,7 @@ public class CustomerServlet extends HttpServlet {
         try {
 
             Class.forName("com.mysql.cj.jdbc.Driver");
+
 
             Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/shop","root" , "1234");
             PreparedStatement pstm = connection.prepareStatement("SELECT * FROM cuistomer");
